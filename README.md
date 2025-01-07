@@ -1,1 +1,10 @@
-# nedb25-poster
+# Is Partitioning Really Worth It? Efficient, Fully Concurrent Hash Aggregation
+
+Daniel Xue (danxue@seas.upenn.edu), Ryan Marcus (rcmarcus@seas.upenn.edu)
+
+*University of Pennsylvania*
+
+The capabilities of modern server-grade hardware have become increasingly formidable, especially in the area of processing power. For example, Amazon’s newest Gravitron4 processor has 96 cores and Intel’s 6th generation Xeon processors have up to 288 cores. Therefore, an important area of research in the databases community is developing parallel-computing techniques to harness these hardware advancements via intra-query parallelism. While some operators such as selection are trivially parallelizable, one persistently thorny issue has been the execution of aggregations. Since performant concurrent hash tables are hard to design, the predominant approach is to leverage partitioning to execute hash aggregations. However, the performance of this approach suffers due to database skew and overhead from partitioning and merging. Therefore, we investigate if a fully concurrent implementation can achieve competitive or superior throughput. 
+
+Our implementation splits the task of aggregation into two steps: ticketing and accumulating. In the first step, keys are mapped to unique tickets (thought of as memory addresses) using a hash table. We then use the tickets to index into a vector of accumulators where the actual value is aggregated. We find that significant optimizations can be made by leveraging specialized hash tables optimized for lookups and inserts (since once a ticket is inserted, it is never updated or deleted). We then test various ways of managing concurrency on the underlying vector of accumulators and choose the most performant method. We benchmark the entire aggregation pipeline and find that our implementation exhibits excellent scaling behavior and competitive performance compared to a partition-based implementation on various workloads and data distributions. These results indicate that the initial intuition to write off fully concurrent hash aggregations is potentially misguided, opening up new possibilities for optimizing query execution.
+
